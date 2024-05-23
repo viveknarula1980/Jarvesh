@@ -11,7 +11,11 @@ It works as :
 Dependencies - 
 
 'speech_recognition': Used for speech recognition=  pip install SpeechRecognition
+
 'pyttsx3': Utilized for text-to-speech conversion=  pip install pyttsx3
+
 'openai': Necessary for interacting with the OpenAI API=  https://github.com/openai/openai-python
+
 'webbrowser': Enables opening web browser URLs= This module is part of Python's standard library, so there's no separate documentation link.
+
 'deep_translator': Used for language translation= https://github.com/nidhaloff/deep-translator
