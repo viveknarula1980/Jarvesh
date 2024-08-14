@@ -7,33 +7,35 @@ import datetime
 import random
 import numpy as np
 
-
 chatStr = ""
-# https://youtu.be/Z3ZAJoi4x6Q
+
+# Function to interact with OpenAI's GPT-3 model and get a chat response
 def chat(query):
     global chatStr
-    print(chatStr)
+    print("Current conversation:\n", chatStr)
     openai.api_key = apikey
-    chatStr += f"Harry: {query}\n Jarvis: "
+    chatStr += f"User: {query}\nJarvis: "
+    
     response = openai.Completion.create(
         model="text-davinci-003",
-        prompt= chatStr,
+        prompt=chatStr,
         temperature=0.7,
         max_tokens=256,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0
     )
-    # todo: Wrap this inside of a  try catch block
+    
+    # Send the response back to the user and update the conversation history
     say(response["choices"][0]["text"])
     chatStr += f"{response['choices'][0]['text']}\n"
     return response["choices"][0]["text"]
 
-
+# Function to get a response from OpenAI based on a given prompt
 def ai(prompt):
     openai.api_key = apikey
-    text = f"OpenAI response for Prompt: {prompt} \n *************************\n\n"
-
+    text = f"OpenAI response for prompt: {prompt}\n*************************\n\n"
+    
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
@@ -43,76 +45,88 @@ def ai(prompt):
         frequency_penalty=0,
         presence_penalty=0
     )
-    # todo: Wrap this inside of a  try catch block
-    # print(response["choices"][0]["text"])
+    
     text += response["choices"][0]["text"]
+    
+    # Create a directory for OpenAI responses if it doesn't exist
     if not os.path.exists("Openai"):
         os.mkdir("Openai")
 
-    # with open(f"Openai/prompt- {random.randint(1, 2343434356)}", "w") as f:
-    with open(f"Openai/{''.join(prompt.split('intelligence')[1:]).strip() }.txt", "w") as f:
+    # Save the response to a file named after the prompt
+    with open(f"Openai/{''.join(prompt.split('intelligence')[1:]).strip()}.txt", "w") as f:
         f.write(text)
 
+# Function to use the system's speech synthesis to say the text aloud
 def say(text):
     os.system(f'say "{text}"')
 
+# Function to take a voice command from the user
 def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        # r.pause_threshold =  0.6
+        print("Listening for user command...")
         audio = r.listen(source)
         try:
-            print("Recognizing...")
+            print("Recognizing speech...")
             query = r.recognize_google(audio, language="en-in")
             print(f"User said: {query}")
             return query
         except Exception as e:
-            return "Some Error Occurred. Sorry from Jarvis"
+            return "An error occurred. Sorry from Jarvis."
 
+# Main loop to run the Jarvis A.I. assistant
 if __name__ == '__main__':
     print('Welcome to Jarvis A.I')
     say("Jarvis A.I")
+    
     while True:
-        print("Listening...")
         query = takeCommand()
-        # todo: Add more sites
-        sites = [["youtube", "https://www.youtube.com"], ["wikipedia", "https://www.wikipedia.com"], ["google", "https://www.google.com"],]
+        
+        # Predefined sites that Jarvis can open
+        sites = [
+            ["youtube", "https://www.youtube.com"], 
+            ["wikipedia", "https://www.wikipedia.com"], 
+            ["google", "https://www.google.com"],
+        ]
+        
+        # Check if the user asked to open any predefined sites
         for site in sites:
             if f"Open {site[0]}".lower() in query.lower():
-                say(f"Opening {site[0]} sir...")
+                say(f"Opening {site[0]}...")
                 webbrowser.open(site[1])
-        # todo: Add a feature to play a specific song
-        if "open music" in query:
+        
+        # Check if the user asked to play music
+        if "open music" in query.lower():
             musicPath = "/Users/harry/Downloads/downfall-21371.mp3"
             os.system(f"open {musicPath}")
 
-        elif "the time" in query:
-            musicPath = "/Users/harry/Downloads/downfall-21371.mp3"
+        # Check if the user asked for the current time
+        elif "the time" in query.lower():
             hour = datetime.datetime.now().strftime("%H")
-            min = datetime.datetime.now().strftime("%M")
-            say(f"Sir time is {hour} bajke {min} minutes")
+            minute = datetime.datetime.now().strftime("%M")
+            say(f"The current time is {hour} hours and {minute} minutes.")
 
-        elif "open facetime".lower() in query.lower():
+        # Check if the user asked to open FaceTime
+        elif "open facetime" in query.lower():
             os.system(f"open /System/Applications/FaceTime.app")
 
-        elif "open pass".lower() in query.lower():
+        # Check if the user asked to open a specific application
+        elif "open pass" in query.lower():
             os.system(f"open /Applications/Passky.app")
 
-        elif "Using artificial intelligence".lower() in query.lower():
+        # Check if the user mentioned artificial intelligence to trigger AI response
+        elif "using artificial intelligence" in query.lower():
             ai(prompt=query)
 
-        elif "Jarvis Quit".lower() in query.lower():
+        # Check if the user asked Jarvis to quit
+        elif "jarvis quit" in query.lower():
             exit()
 
-        elif "reset chat".lower() in query.lower():
+        # Check if the user wants to reset the chat history
+        elif "reset chat" in query.lower():
             chatStr = ""
 
+        # If the query doesn't match any of the above, use the chat function
         else:
-            print("Chatting...")
+            print("Processing chat response...")
             chat(query)
-
-
-
-
-
-        # say(query)
