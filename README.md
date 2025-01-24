@@ -8,7 +8,7 @@ It works as :
 
 3. It also can translate languages, currently it's giving reliable results in Indian language such as Hindi. (More languages to come....)
 
-Dependencies-
+# Dependencies-
 
 'speech_recognition': Used for speech recognition=  pip install SpeechRecognition
 
