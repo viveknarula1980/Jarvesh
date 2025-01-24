@@ -19,3 +19,8 @@ It works as :
 'webbrowser': Enables opening web browser URLs= This module is part of Python's standard library, so there's no separate documentation link.
 
 'deep_translator': Used for language translation= https://github.com/nidhaloff/deep-translator
+
+
+## Contributing:
+
+Contributions are welcome! Please open an issue to discuss proposed changes or submit a pull request.
